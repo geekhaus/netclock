@@ -1,10 +1,11 @@
 //
 //  ContentView.swift
-//  MultiClock
+//  netclock
 //
 //  Tabbed UI for the solar metric clock.
 //
-//  Copyright 2023, Michael A. Olson.
+//  Copyright 2023, Michael A. Olson
+//  Copyright 2025, William Anderson
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:
@@ -95,7 +96,7 @@ extension View {
 }
 
 struct ContentView: View {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     @State private var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
@@ -106,12 +107,6 @@ struct ContentView: View {
                         .foregroundColor(.gray)
                     Text("Time")
                 }.tag(0)
-            ConverterView()
-                .tabItem {
-                    Label("convert", systemImage: "arrow.left.arrow.right.square")
-                        .foregroundColor(.gray)
-                    Text("Convert)")
-                }.tag(1)
             InfoView()
                 .tabItem {
                     Label("info", systemImage: "info.circle.fill")
@@ -132,7 +127,7 @@ struct ContentView: View {
 
 struct ContentView_Previews:
     PreviewProvider {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     static var previews: some View {
         ContentView()
     }

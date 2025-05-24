@@ -1,6 +1,6 @@
 //
 //  ContentView.swift
-//  MultiClock
+//  netclock
 //
 //  Tabbed UI for the solar metric clock.
 //
@@ -95,7 +95,7 @@ extension View {
 }
 
 struct ContentView: View {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     @State private var orientation = UIDeviceOrientation.unknown
     
     var body: some View {
@@ -132,7 +132,7 @@ struct ContentView: View {
 
 struct ContentView_Previews:
     PreviewProvider {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     static var previews: some View {
         ContentView()
     }

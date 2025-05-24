@@ -2,7 +2,7 @@
 //  ConverterView.swift
 //  ConverterTemplate
 //
-//  Displays the MultiClocks' Converter tab. Allows the user to choose a date, type in a metric or an hh:mm time,
+//  Displays the netclocks' Converter tab. Allows the user to choose a date, type in a metric or an hh:mm time,
 //  solar or civil, for that date, and have the clock convert that input time to all the other options.
 //
 //  Copyright 2023, Michael A. Olson.
@@ -39,7 +39,7 @@ enum AmPm {
 }
 
 struct ConverterView: View {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     @Environment(\.colorScheme) private var colorScheme
 
     // selected stores which of the four time fields -- solar hhmm/metric, civil hhmm/metric -- the user selected

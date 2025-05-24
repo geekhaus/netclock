@@ -1,13 +1,13 @@
 //
-//  MultiClockUITestsLaunchTests.swift
-//  MultiClockUITests
+//  netclockUITestsLaunchTests.swift
+//  netclockUITests
 //
 //  Created by Mike Olson on 10/1/23.
 //
 
 import XCTest
 
-final class MultiClockUITestsLaunchTests: XCTestCase {
+final class netclockUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
         true

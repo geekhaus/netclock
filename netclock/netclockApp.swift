@@ -1,6 +1,6 @@
 //
-//  MultiClockApp.swift
-//  MultiClock
+//  netclockApp.swift
+//  netclock
 //
 //  Show the time in multiple ways. Maintains civil time in the current time zone and solar
 //  time based on the user's location. Computes sunrise/sunset times for both. Requires
@@ -13,7 +13,8 @@
 //
 //  Relies on Chris Howell's Solar package for sunrise/sunset computation.
 //
-//  Copyright 2023, Michael A. Olson.
+//  Copyright 2023, Michael A. Olson
+//  Copyright 2025, William Anderson
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:
@@ -93,7 +94,7 @@ class TimeConverter {
     var tc_solar_metric = ""
 }
 
-class MultiClock: ObservableObject {
+class netclock: ObservableObject {
     // The solar clock does the work of solar/civil time computation
     private var mc_sc = SolarClock()
     
@@ -334,18 +335,18 @@ class MultiClock: ObservableObject {
     }
 }
 
-extension MultiClock {
-    func started() -> MultiClock {
+extension netclock {
+    func started() -> netclock {
         start()
         return self
     }
 }
 
-// The MultiClock has a converter tab that lets the user enter a solar or metric time in metric or hh:mm format,
+// The netclock has a converter tab that lets the user enter a solar or metric time in metric or hh:mm format,
 // pick a date, and convert the input time to all the other varieties as of that date. The function below supports
 // that converter. The t parameter is a 4-digit input, the which parameter identifies solar/civil hhmm/metric,
 // and the case statement handles the bookkeeping for each of those cases.
-extension MultiClock {
+extension netclock {
     func convertTime(t: Int, dd: Int, mm: Int, yyyy: Int, which: Selection) -> TimeConverter {
         let new_tc = TimeConverter()
         
@@ -450,7 +451,7 @@ extension MultiClock {
 @main
 struct Solar_metric_clockApp: App {
     // we make this a state object so it's visible in the views -- it's where we put all the display info
-    @StateObject private var mc = MultiClock()
+    @StateObject private var mc = netclock()
     
     var body: some Scene {
         WindowGroup {

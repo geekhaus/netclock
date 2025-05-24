@@ -1,8 +1,8 @@
 //
 //  InfoView.swift
-//  MultiClock
+//  netclock
 //
-//  Displays the MultiClock's Info tab.
+//  Displays the netclock's Info tab.
 //
 //  Copyright 2023, Michael A. Olson.
 //
@@ -35,12 +35,12 @@ import SwiftUI
 struct InfoView: View {
     var body: some View {
         ScrollView {
-            Text("MultiClock")
+            Text("netclock")
                 .font(.system(size: 30, weight: .bold))
                 .multilineTextAlignment(.center)
             Divider()
             VStack(alignment: .leading) {
-                Text("For more information on solar time, metric time and the inspiration for this application, please visit https://www.olsons.net/projects/multiclock. Please send questions or bug reports to multiclock@olsons.net.")
+                Text("For more information on solar time, metric time and the inspiration for this application, please visit https://www.olsons.net/projects/netclock. Please send questions or bug reports to netclock@olsons.net.")
                     .italic()
                 Divider()
                 VStack(alignment: .leading) {
@@ -80,7 +80,7 @@ struct InfoView: View {
                     Text("    The time displays also show the sunrise and sunset times for your location.")
                     Text("    Like solar time, sunrise and sunset depend on where you are. This is true for both civil and solar sunrise and sunset. They vary across your time zone in the same way that solar noon does. You may notice as you move around that those times change on the time display over the course of the day.")
                     Text("    Logically, solar noon should be right in the middle of solar sunrise and solar sunset. If you check your time display, though, you will notice that it's usually close to the midpoint, but not exactly in the middle. That's because over the course of the year, the daylight hours get shorter or longer as the winter and summer solstices approach. Sunrise and sunset get earlier or later, and sunset has more hours in the day to be affected by orbital change. That means noon is a little off the midpoint.")
-                    Text("    Solar noon on your MultiClock is accurate to within thirteen seconds, based on the approximation the clock uses to compute the equation of time.")
+                    Text("    Solar noon on your netclock is accurate to within thirteen seconds, based on the approximation the clock uses to compute the equation of time.")
                 }
                 VStack(alignment: .leading) {
                     Text(" ")
@@ -95,17 +95,17 @@ struct InfoView: View {
                     Text("Location services and privacy")
                         .font(.title2)
                         .bold()
-                    Text("    To show all of these times, MultiClock needs to know your location. It asks to use your location only while you are using the application. If you choose not to share location information, the clock will still show you the civil time, but will not be able to display solar time or to show sunrise/sunset times.")
+                    Text("    To show all of these times, netclock needs to know your location. It asks to use your location only while you are using the application. If you choose not to share location information, the clock will still show you the civil time, but will not be able to display solar time or to show sunrise/sunset times.")
                     Text("    Your location is never shared off of your device. It is used only to determine solar time and sunrise/sunset times.")
                     Text("    If you allow the application to use your precise location, solar time and sunrise/sunset times will be most accurate. If you share your location, but not your precise location, those times will be slightly less accurate.")
-                    Text("    You can change whether and how the clock can access your location in your device settings. Go to Settings -> Privacy and security, or to the app settings for Multiclock in the iOS Settings appliction, to change the setting for this application.")
+                    Text("    You can change whether and how the clock can access your location in your device settings. Go to Settings -> Privacy and security, or to the app settings for netclock in the iOS Settings appliction, to change the setting for this application.")
                 }
                 VStack(alignment: .leading) {
                     Text(" ")
                     Text("Preferences")
                         .font(.title2)
                         .bold()
-                    Text("    You can change the app's behavior in the iOS Settings app, in the entry for Multiclock.")
+                    Text("    You can change the app's behavior in the iOS Settings app, in the entry for netclock.")
                     Text("    As is true with iOS apps generally, the screen will dim and turn off unless you touch it periodically. You can keep the screen live, so that it does not dim or go black, with the Keep Display Live preference. This is useful if you are using the app as a desk clock. This will use more battery power.")
                     Text("    By default, the clock uses 12-hour, AM/PM display format for hh:mm times. You can switch to a 24-hour clock display. If you have your system-wide preference set for a 24-hour clock (see Preferences -> General -> Date and Time), that setting will override this one.")
                     Text("    Out of respect for prime numbers and the important work that they do, if any of the metric times on the screen is prime, it will be highlighted in red. It's a prime time! You can turn this behavior off or on.")

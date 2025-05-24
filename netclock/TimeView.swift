@@ -1,8 +1,8 @@
 //
 //  TimeView.swift
-//  MultiClock
+//  netclock
 //
-//  Displays the MultiClock's Time tab.
+//  Displays the netclock's Time tab.
 //
 //  Copyright 2023, Michael A. Olson.
 //
@@ -33,7 +33,7 @@
 import SwiftUI
 
 struct TimeView: View {
-    @EnvironmentObject var mc: MultiClock
+    @EnvironmentObject var mc: netclock
     @Environment(\.colorScheme) private var colorScheme
     
     let hPadding: CGFloat = 20

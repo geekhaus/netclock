@@ -1,13 +1,13 @@
 //
-//  MultiClockUITests.swift
-//  MultiClockUITests
+//  netclockUITests.swift
+//  netclockUITests
 //
 //  Created by Mike Olson on 10/1/23.
 //
 
 import XCTest
 
-final class MultiClockUITests: XCTestCase {
+final class netclockUITests: XCTestCase {
 
     override func setUpWithError() throws {
         // Put setup code here. This method is called before the invocation of each test method in the class.

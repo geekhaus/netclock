@@ -1,6 +1,6 @@
 //
 //  SolarClock.swift
-//  MultiClock
+//  netclock
 //
 //  Implements a clock that keeps track of civil and solar time, based on the location of
 //  the user. Requires access to system location services for solar time. Will work in a
@@ -223,7 +223,7 @@ class SolarClock: NSObject, CLLocationManagerDelegate {
     }
     
     // This interface allows a caller to get the solar/civil delta as of a particular date and hour.
-    // It supports a requested feature for the MultiClock: converting among solar and civil times.
+    // It supports a requested feature for the netclock: converting among solar and civil times.
     func sc_delta(yyyy: Int, mm: Int, dd: Int, hh: Int) -> Double?
     {
         // Only accurate for the current century

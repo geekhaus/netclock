@@ -20,31 +20,11 @@
 			<key>Type</key>
 			<string>PSToggleSwitchSpecifier</string>
 			<key>Title</key>
-			<string>Highlight primes</string>
+			<string>24-hour clock</string>
 			<key>Key</key>
-			<string>mc_primetime</string>
+			<string>mc_24hour</string>
 			<key>DefaultValue</key>
 			<true/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>12-hour clock</string>
-			<key>Key</key>
-			<string>mc_12hour</string>
-			<key>DefaultValue</key>
-			<true/>
-		</dict>
-		<dict>
-			<key>Type</key>
-			<string>PSToggleSwitchSpecifier</string>
-			<key>Title</key>
-			<string>Left-handed converter</string>
-			<key>Key</key>
-			<string>mc_lefthanded</string>
-			<key>DefaultValue</key>
-			<false/>
 		</dict>
 	</array>
 </dict>

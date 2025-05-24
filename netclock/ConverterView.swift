@@ -3,7 +3,7 @@
 //  ConverterTemplate
 //
 //  Displays the netclocks' Converter tab. Allows the user to choose a date, type in a metric or an hh:mm time,
-//  solar or civil, for that date, and have the clock convert that input time to all the other options.
+//  solar or device, for that date, and have the clock convert that input time to all the other options.
 //
 //  Copyright 2023, Michael A. Olson
 //  Copyright 2025, William Anderson
@@ -43,13 +43,13 @@ struct ConverterView: View {
     @EnvironmentObject var mc: netclock
     @Environment(\.colorScheme) private var colorScheme
 
-    // selected stores which of the four time fields -- solar hhmm/metric, civil hhmm/metric -- the user selected
+    // selected stores which of the four time fields -- solar hhmm/metric, device hhmm/metric -- the user selected
     @State private var selected: Selection? = nil
     
     // strings used to display times in the time display
-    @State private var civil_hhmm = "hh:mm"
-    @State private var civil_ampm = ""
-    @State private var civil_metric = "0000"
+    @State private var device_hhmm = "hh:mm"
+    @State private var device_ampm = ""
+    @State private var device_metric = "0000"
     @State private var solar_hhmm = "hh:mm"
     @State private var solar_ampm = ""
     @State private var solar_metric = "0000"
@@ -90,14 +90,14 @@ struct ConverterView: View {
                     HStack {
                         HStack {
                             digitPad        // The 0-9 pad with the "del" key
-                            if (mc.mc_12hour) {
+                            if (!mc.mc_24hour) {
                                 ampmPad         // the am/pm buttons
                             }
                             Divider()
                             VStack {
                                 datePicker          // the date on which to do the conversion
                                 timeConvertDisplay  // Four time fields and the convert button
-                                labelRow            // Row that labels civil and solar time and has "convert" button
+                                labelRow            // Row that labels device and solar time and has "convert" button
                                 Spacer()
                             }
                         }
@@ -108,13 +108,13 @@ struct ConverterView: View {
                         VStack {
                             datePicker          // the date on which to do the conversion
                             timeConvertDisplay  // Four time fields and the convert button
-                            labelRow            // Row that labels civil and solar time and has "convert" button
+                            labelRow            // Row that labels device and solar time and has "convert" button
                             Spacer()
                         }
                         Divider()
                         HStack {
                             digitPad        // The 0-9 pad with the "del" key
-                            if (mc.mc_12hour) {
+                            if (!mc.mc_24hour) {
                                 ampmPad         // the am/pm buttons
                             }
                         }
@@ -124,7 +124,7 @@ struct ConverterView: View {
                 .padding(.vertical, vPadding)
                 .padding(.horizontal, hPadding)
                 .alert("Invalid time", isPresented: $badHHMMTimeEntered) { } message: {
-                    if (mc.mc_12hour) {
+                    if (!mc.mc_24hour) {
                         Text("Please enter a time between 12:00 am and 11:59 pm.")
                     } else {
                         Text("Please enter a time between 00:00 and 23:59.")
@@ -143,10 +143,10 @@ struct ConverterView: View {
                 header
                 datePicker          // the date on which to do the conversion
                 timeConvertDisplay  // Four time fields and the convert button
-                labelRow            // Row that labels civil and solar time and has "convert" button
+                labelRow            // Row that labels device and solar time and has "convert" button
                 HStack {
                     digitPad        // The 0-9 pad with the "del" key
-                    if (mc.mc_12hour) {
+                    if (!mc.mc_24hour) {
                         ampmPad         // the am/pm buttons
                     }
                 }
@@ -154,7 +154,7 @@ struct ConverterView: View {
                 .padding(.vertical, vPadding)
                 .padding(.horizontal, hPadding)
                 .alert("Invalid time", isPresented: $badHHMMTimeEntered) { } message: {
-                    if (mc.mc_12hour) {
+                    if (!mc.mc_24hour) {
                         Text("Please enter a time between 12:00 am and 11:59 pm.")
                     } else {
                         Text("Please enter a time between 00:00 and 23:59.")
@@ -335,10 +335,10 @@ extension ConverterView {
         nDigits += 1
         
         switch selected {
-        case .civil_hhmm:
-            civil_hhmm = timeString(dArray: digits, nd: nDigits, which: .civil_hhmm)
-        case .civil_metric:
-            civil_metric = timeString(dArray: digits, nd: nDigits, which: .civil_metric)
+        case .device_hhmm:
+            device_hhmm = timeString(dArray: digits, nd: nDigits, which: .device_hhmm)
+        case .device_metric:
+            device_metric = timeString(dArray: digits, nd: nDigits, which: .device_metric)
         case .solar_hhmm:
             solar_hhmm = timeString(dArray: digits, nd: nDigits, which: .solar_hhmm)
         case .solar_metric:
@@ -357,7 +357,7 @@ extension ConverterView {
         for i in 0...3 {
             if let d = dArray[i] {
                 newStr = newStr + String(d)
-            } else if (which == .solar_hhmm || which == .civil_hhmm) {
+            } else if (which == .solar_hhmm || which == .device_hhmm) {
                 // add blanks for missing digits so colon is correctly positioned
                 newStr = " " + newStr
             } else {
@@ -370,7 +370,7 @@ extension ConverterView {
             }
         }
         
-        if (which == .civil_hhmm || which == .solar_hhmm) {
+        if (which == .device_hhmm || which == .solar_hhmm) {
             newStr = newStr.prefix(2) + ":" + newStr.suffix(2)
         }
         return (newStr)
@@ -386,10 +386,10 @@ extension ConverterView {
         digits[nDigits] = nil
 
         switch selected {
-        case .civil_hhmm:
-            civil_hhmm = timeString(dArray: digits, nd: nDigits, which: selected!)
-        case .civil_metric:
-            civil_metric = timeString(dArray: digits, nd: nDigits, which: selected!)
+        case .device_hhmm:
+            device_hhmm = timeString(dArray: digits, nd: nDigits, which: selected!)
+        case .device_metric:
+            device_metric = timeString(dArray: digits, nd: nDigits, which: selected!)
         case .solar_hhmm:
             solar_hhmm = timeString(dArray: digits, nd: nDigits, which: selected!)
         case .solar_metric:
@@ -434,19 +434,19 @@ extension ConverterView {
         if (selected == nil) {
             return
         }
-        if (selected == .solar_metric || selected == .civil_metric) {
+        if (selected == .solar_metric || selected == .device_metric) {
             // no am/pm in metric times
             return
         }
-        if (mc.mc_12hour) {
-            if (selected == .civil_hhmm) {
-                civil_ampm = "am"
+        if (!mc.mc_24hour) {
+            if (selected == .device_hhmm) {
+                device_ampm = "am"
             } else {
                 solar_ampm = "am"
             }
             isAmPm = .am
         } else {
-            civil_ampm = ""
+            device_ampm = ""
             solar_ampm = ""
             isAmPm = nil
         }
@@ -456,12 +456,12 @@ extension ConverterView {
         if (selected == nil) {
             return
         }
-        if (selected == .solar_metric || selected == .civil_metric) {
+        if (selected == .solar_metric || selected == .device_metric) {
             // no am/pm in metric times
             return
         }
-        if (selected == .civil_hhmm) {
-            civil_ampm = "pm"
+        if (selected == .device_hhmm) {
+            device_ampm = "pm"
         } else {
             solar_ampm = "pm"
         }
@@ -481,7 +481,7 @@ extension ConverterView {
                             .resizable()
                             .frame(width: 30, height: 30)
                             .aspectRatio(contentMode: .fit)
-                        Text("civil time")
+                        Text("device time")
                             .font(.title)
                     }
                     Spacer()
@@ -514,7 +514,7 @@ extension ConverterView {
         let hh = t / 100
         let mm = t % 100
         
-        if (mc.mc_12hour) {
+        if (!mc.mc_24hour) {
             if (hh > 12 || hh == 0 || mm > 59) {
                 return false
             }
@@ -540,21 +540,21 @@ extension ConverterView {
                 enteredNumber = (enteredNumber * 10) + d
             }
         }
-        if (selected == .civil_hhmm || selected == .solar_hhmm) {
+        if (selected == .device_hhmm || selected == .solar_hhmm) {
             if (nDigits < 3 || !validateHHMMTime(t: enteredNumber)) {
                 badHHMMTimeEntered = true
                 return
             }
         }
         
-        if ((selected == .civil_metric || selected == .solar_metric) && nDigits == 0) {
+        if ((selected == .device_metric || selected == .solar_metric) && nDigits == 0) {
             badMetricTimeEntered = true
             return
         }
         
         // If we're using a 12-hour clock, adjust hours to 24-hour clock based on am/pm input
-        if (mc.mc_12hour) {
-            if (selected == .civil_hhmm || selected == .solar_hhmm) {
+        if (!mc.mc_24hour) {
+            if (selected == .device_hhmm || selected == .solar_hhmm) {
                 if (isAmPm == .pm) {
                     if (enteredNumber < 1200) {
                         enteredNumber += 1200
@@ -574,12 +574,12 @@ extension ConverterView {
         let dd = components.day!
         let tc = mc.convertTime(t: enteredNumber, dd: dd, mm: mm, yyyy: yyyy, which: selected!)
         
-        civil_hhmm = tc.tc_civil_hhmm
-        civil_metric = tc.tc_civil_metric
+        device_hhmm = tc.tc_device_hhmm
+        device_metric = tc.tc_device_metric
         solar_hhmm = tc.tc_solar_hhmm
         solar_metric = tc.tc_solar_metric
         
-        civil_ampm = ""
+        device_ampm = ""
         solar_ampm = ""
         
         selected = nil
@@ -609,13 +609,13 @@ extension ConverterView {
     }
 }
 
-// The time conversion display. Shows four text fields: civil hhmm, civil metric, solar hhmm, solar metric.
+// The time conversion display. Shows four text fields: device hhmm, device metric, solar hhmm, solar metric.
 // They're selectable and the user can pick the one to enter. Updates to the entered number are captured
 // in that field for display, and the selected field is used at conversion time to decide what we have and
 // what we need to compute.
 
 extension ConverterView {
-    // User enters one of civil hh:mm, civil metric, solar hh:mm or solar metric.
+    // User enters one of device hh:mm, device metric, solar hh:mm or solar metric.
     // When the "convert button is pressed, we convert that time to all the others.
     private var timeConvertDisplay: some View {
         VStack {
@@ -623,16 +623,16 @@ extension ConverterView {
                 VStack {
                     HStack {
                         HStack {
-                            Text(civil_hhmm)
+                            Text(device_hhmm)
                                 .font(textFont)
-                            Text(civil_ampm)
+                            Text(device_ampm)
                                 .font(textFont)
                         }
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(2)
                             .overlay(RoundedRectangle(cornerRadius: 16)
-                                .stroke((selected == .civil_hhmm ? .blue : .gray), lineWidth: 2))
-                            .onTapGesture{ gotSelection(s: .civil_hhmm)}
+                                .stroke((selected == .device_hhmm ? .blue : .gray), lineWidth: 2))
+                            .onTapGesture{ gotSelection(s: .device_hhmm)}
                         Text(" ")
                         Image(systemName: "deskclock")
                             .resizable()
@@ -652,16 +652,16 @@ extension ConverterView {
                         .onTapGesture{ gotSelection(s: .solar_hhmm)}
                     }
                     HStack {
-                        Text(civil_metric)
+                        Text(device_metric)
                             .font(textFont)
-                            .foregroundColor(civil_metric.isPrimeMetricTime && mc.mc_primetime ?
+                            .foregroundColor(device_metric.isPrimeMetricTime && mc.mc_primetime ?
                                              .red : (colorScheme == .dark ? .white : .black))
                             .lineLimit(1)
                             .frame(maxWidth: .infinity, alignment: .center)
                             .padding(2)
                             .overlay(RoundedRectangle(cornerRadius: 16)
-                                .stroke((selected == .civil_metric ? .blue : .gray), lineWidth: 2))
-                            .onTapGesture{ gotSelection(s: .civil_metric)}
+                                .stroke((selected == .device_metric ? .blue : .gray), lineWidth: 2))
+                            .onTapGesture{ gotSelection(s: .device_metric)}
                         Text(" ")
                         Image(systemName: "ruler")
                             .resizable()
@@ -688,20 +688,20 @@ extension ConverterView {
         selected = s
         
         switch s {
-        case .civil_hhmm:
-            civil_hhmm = "  :  "
-            if (mc.mc_12hour) {
-                civil_ampm = "am"
+        case .device_hhmm:
+            device_hhmm = "  :  "
+            if (!mc.mc_24hour) {
+                device_ampm = "am"
                 isAmPm = .am
             } else {
-                civil_ampm = ""
+                device_ampm = ""
                 isAmPm = nil
             }
-        case .civil_metric:
-            civil_metric = " "
+        case .device_metric:
+            device_metric = " "
         case .solar_hhmm:
             solar_hhmm = "  :  "
-            if (mc.mc_12hour) {
+            if (!mc.mc_24hour) {
                 solar_ampm = "am"
                 isAmPm = .am
             } else {
@@ -715,11 +715,11 @@ extension ConverterView {
     
     private func resetForm() {
         selected = nil
-        civil_hhmm = " "
-        civil_metric = " "
+        device_hhmm = " "
+        device_metric = " "
         solar_hhmm = " "
         solar_metric = " "
-        civil_ampm = ""
+        device_ampm = ""
         solar_ampm = ""
         for i in 0...3 {
             digits[i] = nil

@@ -107,12 +107,6 @@ struct ContentView: View {
                         .foregroundColor(.gray)
                     Text("Time")
                 }.tag(0)
-            ConverterView()
-                .tabItem {
-                    Label("convert", systemImage: "arrow.left.arrow.right.square")
-                        .foregroundColor(.gray)
-                    Text("Convert)")
-                }.tag(1)
             InfoView()
                 .tabItem {
                     Label("info", systemImage: "info.circle.fill")

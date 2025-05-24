@@ -20,6 +20,7 @@
 		275C69172AD4BBBE002F7F7A /* ConverterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 275C69162AD4BBBE002F7F7A /* ConverterView.swift */; };
 		275C696C2ADF8C1A002F7F7A /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = 275C696B2ADF8C1A002F7F7A /* Settings.bundle */; };
 		2761D08E2AD0380B00D4FDF3 /* TimeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2761D08D2AD0380B00D4FDF3 /* TimeView.swift */; };
+		B52019C72DE2500200BFB8C1 /* NetworkClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = B52019C62DE2500200BFB8C1 /* NetworkClock.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		275C696B2ADF8C1A002F7F7A /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		2761D08D2AD0380B00D4FDF3 /* TimeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeView.swift; sourceTree = "<group>"; };
 		27BC30142AE491C4002267A3 /* netclock.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = netclock.entitlements; sourceTree = "<group>"; };
+		B52019C62DE2500200BFB8C1 /* NetworkClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkClock.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,6 +112,7 @@
 				27BC30142AE491C4002267A3 /* netclock.entitlements */,
 				2758B26D2AC9D77400BEC60A /* netclockApp.swift */,
 				2758B29A2AC9D8F600BEC60A /* SolarClock.swift */,
+				B52019C62DE2500200BFB8C1 /* NetworkClock.swift */,
 				2758B26F2AC9D77400BEC60A /* ContentView.swift */,
 				2761D08D2AD0380B00D4FDF3 /* TimeView.swift */,
 				275C69162AD4BBBE002F7F7A /* ConverterView.swift */,
@@ -284,6 +287,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				275C69172AD4BBBE002F7F7A /* ConverterView.swift in Sources */,
+				B52019C72DE2500200BFB8C1 /* NetworkClock.swift in Sources */,
 				2758B29B2AC9D8F600BEC60A /* SolarClock.swift in Sources */,
 				2761D08E2AD0380B00D4FDF3 /* TimeView.swift in Sources */,
 				2758B2702AC9D77400BEC60A /* ContentView.swift in Sources */,

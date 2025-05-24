@@ -2,12 +2,12 @@
 //  netclockApp.swift
 //  netclock
 //
-//  Show the time in multiple ways. Maintains civil time in the current time zone and solar
+//  Show the time in multiple ways. Maintains device time in the current time zone and solar
 //  time based on the user's location. Computes sunrise/sunset times for both. Requires
 //  location services from the system. If those aren't available, will work in degraded
-//  mode -- civil time is available, but solar and sunrise/sunset times are nil.
+//  mode -- device time is available, but solar and sunrise/sunset times are nil.
 //
-//  Displays both civil and solar time in three ways: Conventional hh:mm time, a metric time
+//  Displays both device and solar time in three ways: Conventional hh:mm time, a metric time
 //  (a four-digit counter of hundred-microday intervals), and as progress bars showing how
 //  much of the day has elapsed. The hh:mm and metric views include sunrise and sunset times.
 //
@@ -81,21 +81,21 @@ extension Date {
 }
 
 enum Selection {
-    case civil_hhmm
-    case civil_metric
+    case device_hhmm
+    case device_metric
     case solar_hhmm
     case solar_metric
 }
 
 class TimeConverter {
-    var tc_civil_hhmm = ""
-    var tc_civil_metric = ""
+    var tc_device_hhmm = ""
+    var tc_device_metric = ""
     var tc_solar_hhmm = ""
     var tc_solar_metric = ""
 }
 
 class netclock: ObservableObject {
-    // The solar clock does the work of solar/civil time computation
+    // The solar clock does the work of solar/device time computation
     private var mc_sc = SolarClock()
     
     // we want to update our clock every ten microdays, 0.864 seconds
@@ -103,33 +103,33 @@ class netclock: ObservableObject {
     private var mc_timer = Timer()
     
     // settable in the iOS Settings app
-    var mc_primetime = true
-    var mc_12hour = true
+    var mc_primetime = false
+    var mc_24hour = true
     var mc_lhconverter = false
     var mc_idletimerdisabled = false
     
     // These are all strings to simplify their display in their respective views
 
     // These are all strings to simplify their display in ContentView
-    // clock times for the civil and metric views
+    // clock times for the device and metric views
     @Published var solar_hhmm = "---"
     @Published var solar_metric = "---"
-    @Published var civil_hhmm = "---"
-    @Published var civil_metric = "---"
+    @Published var device_hhmm = "---"
+    @Published var device_metric = "---"
     
     // sunrise/sunset times for the hh:mm and metric time views
     @Published var solar_metric_sunrise = "---"
     @Published var solar_metric_sunset = "---"
     @Published var solar_hhmm_sunrise = "---"
     @Published var solar_hhmm_sunset = "---"
-    @Published var civil_metric_sunrise = "---"
-    @Published var civil_metric_sunset = "---"
-    @Published var civil_hhmm_sunrise = "---"
-    @Published var civil_hhmm_sunset = "---"
+    @Published var device_metric_sunrise = "---"
+    @Published var device_metric_sunset = "---"
+    @Published var device_hhmm_sunrise = "---"
+    @Published var device_hhmm_sunset = "---"
     
     // These are used in the day progress view
-    @Published var civil_day_progress = 0.0
-    @Published var civil_day_prog_pct = "0%"
+    @Published var device_day_progress = 0.0
+    @Published var device_day_prog_pct = "0%"
     @Published var solar_day_progress = 0.0
     @Published var solar_day_prog_pct = "--"
     
@@ -147,14 +147,22 @@ class netclock: ObservableObject {
     }
     
     // turn any of the times in the hh:mm time view into hours and minutes
-    private func getHHMMTimeString(d: Date, useGMT: Bool) -> String {
+    private func getHHMMTimeString(d: Date, showSeconds: Bool, useGMT: Bool) -> String {
         let dateFormatter = DateFormatter()
         
         // Show 12- or 24-hr clock time. System setting for 24-hour clock overrides this.
-        if (mc_12hour) {
-            dateFormatter.dateFormat = "h:mm a"
+        if (mc_24hour) {
+            if (showSeconds) {
+                dateFormatter.dateFormat = "HH:mm:ss"
+            } else {
+                dateFormatter.dateFormat = "HH:mm"
+            }
         } else {
-            dateFormatter.dateFormat = "HH:mm"
+            if (showSeconds) {
+                dateFormatter.dateFormat = "h:mm:ss a"
+            } else {
+                dateFormatter.dateFormat = "h:mm a"
+            }
         }
         
         // We use GMT for the solar time displays to avoid daylight saving changes
@@ -166,33 +174,33 @@ class netclock: ObservableObject {
     }
     
     private func updateTimes() -> Void {
-        // get current civil and solar times from our solar clock
+        // get current device and solar times from our solar clock
         mc_sc.updateTimes()
         
-        let civilTime = mc_sc.sc_civil_time
+        let deviceTime = mc_sc.sc_civil_time
         
-        civil_hhmm = getHHMMTimeString(d: civilTime, useGMT: false)
+        device_hhmm = getHHMMTimeString(d: deviceTime, showSeconds: true, useGMT: false)
 
-        // compute civil metric time from seconds since local midnight
+        // compute device metric time from seconds since local midnight
         // four digits of metric time is hundred-microday resolution
         let secs_per_hundred_udays = 8.64
-        let hundred_microdays_since_midnight =  (civilTime.timeIntervalSinceMidnightLocal! / secs_per_hundred_udays)
+        let hundred_microdays_since_midnight =  (deviceTime.timeIntervalSinceMidnightLocal! / secs_per_hundred_udays)
         
-        civil_metric = getMetricTimeString(t: hundred_microdays_since_midnight)
-        civil_day_progress = Double(Int(civil_metric)!) / 100.0
+        device_metric = getMetricTimeString(t: hundred_microdays_since_midnight)
+        device_day_progress = Double(Int(device_metric)!) / 100.0
         let f = NumberFormatter()
         f.maximumFractionDigits = 0
         f.numberStyle = .percent
-        civil_day_prog_pct = f.string(from: (civil_day_progress / 100.0) as NSNumber)!
+        device_day_prog_pct = f.string(from: (device_day_progress / 100.0) as NSNumber)!
 
         // solar time is only available from the solar clock if location services are available
         // if the user declind that permission, the time will be nil
-        // that's not very interesting for a civil/solar metric clock, but we handle it properly here
+        // that's not very interesting for a device/solar metric clock, but we handle it properly here
         if let solarTime = mc_sc.sc_solar_time {
-            let solar_civil_delta = civilTime.distance(to: solarTime)
-            solar_hhmm = getHHMMTimeString(d: solarTime, useGMT: true)
+            let solar_device_delta = deviceTime.distance(to: solarTime)
+            solar_hhmm = getHHMMTimeString(d: solarTime, showSeconds: true, useGMT: true)
             
-            // compute civil metric time from seconds since local midnight
+            // compute device metric time from seconds since local midnight
             // four digits of metric time is hundred-microday resolution
             let t = solarTime.timeIntervalSinceMidnightGMT!
             let hundred_microdays_since_midnight_gmt = (t / secs_per_hundred_udays)
@@ -209,24 +217,24 @@ class netclock: ObservableObject {
             if let curLoc = mc_sc.sc_loc {
                 
                 // Solar is the sunrise/sunset library
-                if let s = Solar(for: civilTime, coordinate: CLLocationCoordinate2D(latitude: curLoc.latitude, longitude: curLoc.longitude)) {
+                if let s = Solar(for: deviceTime, coordinate: CLLocationCoordinate2D(latitude: curLoc.latitude, longitude: curLoc.longitude)) {
                     
                     // sunrise can be nil if we're in arctic/antarctic "sun doesn't rise" territory
                     if let sunrise = s.sunrise {
                         var hundred_udays: Double
                         
-                        civil_hhmm_sunrise = getHHMMTimeString(d: sunrise, useGMT: false)
+                        device_hhmm_sunrise = getHHMMTimeString(d: sunrise, showSeconds: false, useGMT: false)
                         hundred_udays = sunrise.timeIntervalSinceMidnightLocal! / secs_per_hundred_udays;
-                        civil_metric_sunrise = getMetricTimeString(t: hundred_udays)
+                        device_metric_sunrise = getMetricTimeString(t: hundred_udays)
                         
-                        let adjustedSunrise = sunrise.addingTimeInterval(solar_civil_delta)
-                        solar_hhmm_sunrise = getHHMMTimeString(d: adjustedSunrise, useGMT: true)
+                        let adjustedSunrise = sunrise.addingTimeInterval(solar_device_delta)
+                        solar_hhmm_sunrise = getHHMMTimeString(d: adjustedSunrise, showSeconds: false, useGMT: true)
                         hundred_udays = adjustedSunrise.timeIntervalSinceMidnightGMT! / secs_per_hundred_udays;
                         solar_metric_sunrise = getMetricTimeString(t: hundred_udays)
                     } else {
                         // the sun did not rise today
-                        civil_hhmm_sunrise = "none"
-                        civil_metric_sunrise = "none"
+                        device_hhmm_sunrise = "none"
+                        device_metric_sunrise = "none"
                         solar_hhmm_sunrise = "none"
                         solar_metric_sunrise = "none"
                     }
@@ -235,28 +243,28 @@ class netclock: ObservableObject {
                     if let sunset = s.sunset {
                         var hundred_udays: Double
                         
-                        civil_hhmm_sunset = getHHMMTimeString(d: sunset, useGMT: false)
+                        device_hhmm_sunset = getHHMMTimeString(d: sunset, showSeconds: false, useGMT: false)
                         hundred_udays = sunset.timeIntervalSinceMidnightLocal! / secs_per_hundred_udays;
-                        civil_metric_sunset = getMetricTimeString(t: hundred_udays)
+                        device_metric_sunset = getMetricTimeString(t: hundred_udays)
                         
-                        let adjustedSunset = sunset.addingTimeInterval(solar_civil_delta)
-                        solar_hhmm_sunset = getHHMMTimeString(d: adjustedSunset, useGMT: true)
+                        let adjustedSunset = sunset.addingTimeInterval(solar_device_delta)
+                        solar_hhmm_sunset = getHHMMTimeString(d: adjustedSunset, showSeconds: false, useGMT: true)
                         hundred_udays = adjustedSunset.timeIntervalSinceMidnightGMT! / secs_per_hundred_udays;
                         solar_metric_sunset = getMetricTimeString(t: hundred_udays)
                     } else {
                         // the sun did not set today
-                        civil_hhmm_sunset = "none"
-                        civil_metric_sunset = "none"
+                        device_hhmm_sunset = "none"
+                        device_metric_sunset = "none"
                         solar_hhmm_sunset = "none"
                         solar_metric_sunset = "none"
                     }
                 }
             } else {
                 // we don't know our location, so none of the sun times are computable
-                civil_hhmm_sunrise = "---"
-                civil_hhmm_sunset = "---"
-                civil_metric_sunrise = "---"
-                civil_metric_sunset = "---"
+                device_hhmm_sunrise = "---"
+                device_hhmm_sunset = "---"
+                device_metric_sunrise = "---"
+                device_metric_sunset = "---"
                 
                 solar_hhmm = "---"
                 solar_metric = "---"
@@ -328,7 +336,7 @@ class netclock: ObservableObject {
     
     func loadDefaults() {
         let defaults = UserDefaults.standard
-        self.mc_12hour = defaults.bool(forKey: "mc_12hour")
+        self.mc_24hour = defaults.bool(forKey: "mc_24hour")
         self.mc_primetime = defaults.bool(forKey: "mc_primetime")
         self.mc_lhconverter = defaults.bool(forKey: "mc_lefthanded")
         self.mc_idletimerdisabled = defaults.bool(forKey: "mc_idletimerdisabled")
@@ -344,28 +352,28 @@ extension netclock {
 
 // The netclock has a converter tab that lets the user enter a solar or metric time in metric or hh:mm format,
 // pick a date, and convert the input time to all the other varieties as of that date. The function below supports
-// that converter. The t parameter is a 4-digit input, the which parameter identifies solar/civil hhmm/metric,
+// that converter. The t parameter is a 4-digit input, the which parameter identifies solar/device hhmm/metric,
 // and the case statement handles the bookkeeping for each of those cases.
 extension netclock {
     func convertTime(t: Int, dd: Int, mm: Int, yyyy: Int, which: Selection) -> TimeConverter {
         let new_tc = TimeConverter()
         
         switch which {
-        case .civil_hhmm:
+        case .device_hhmm:
             let hr = t / 100
             let min = t % 100
             let secsSinceMidnight = Double(((hr * 60) + min) * 60)
             let civmet = secsSinceMidnight / 8.64
-            new_tc.tc_civil_metric = getMetricTimeString(t: civmet)
+            new_tc.tc_device_metric = getMetricTimeString(t: civmet)
             
             let components = DateComponents(year: yyyy, month: mm, day: dd, hour: hr, minute: min)
             let cal = Calendar.current
             let civdate = cal.date(from: components)
-            new_tc.tc_civil_hhmm = getHHMMTimeString(d: civdate!, useGMT: false)
+            new_tc.tc_device_hhmm = getHHMMTimeString(d: civdate!, showSeconds: false, useGMT: false)
             
-            if let solar_civil_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hr) {
-                let soldate = civdate!.addingTimeInterval(solar_civil_delta)
-                new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, useGMT: true)
+            if let solar_device_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hr) {
+                let soldate = civdate!.addingTimeInterval(solar_device_delta)
+                new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, showSeconds: false, useGMT: true)
                 let solarSecsSinceMidnight = soldate.timeIntervalSinceMidnightGMT
                 let solmet = solarSecsSinceMidnight! / 8.64
                 new_tc.tc_solar_metric = getMetricTimeString(t: solmet)
@@ -386,18 +394,18 @@ extension netclock {
             var cal = Calendar(identifier: .iso8601)
             cal.timeZone = TimeZone(identifier: "UTC")!
             let soldate = cal.date(from: components)
-            new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate!, useGMT: true)
+            new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate!, showSeconds: false, useGMT: true)
 
-            if let solar_civil_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hr) {
-                let civdate = soldate!.addingTimeInterval(0.0 - solar_civil_delta)
-                new_tc.tc_civil_hhmm = getHHMMTimeString(d: civdate, useGMT: false)
+            if let solar_device_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hr) {
+                let civdate = soldate!.addingTimeInterval(0.0 - solar_device_delta)
+                new_tc.tc_device_hhmm = getHHMMTimeString(d: civdate, showSeconds: false, useGMT: false)
                 let secsSinceMidnight = civdate.timeIntervalSinceMidnightLocal
                 let civmet = secsSinceMidnight! / 8.64
-                new_tc.tc_civil_metric = getMetricTimeString(t: civmet)
+                new_tc.tc_device_metric = getMetricTimeString(t: civmet)
             } else {
                 // no solar delta available -- location services off
-                new_tc.tc_civil_metric = "---"
-                new_tc.tc_civil_hhmm = "---"
+                new_tc.tc_device_metric = "---"
+                new_tc.tc_device_hhmm = "---"
             }
 
         case .solar_metric:
@@ -408,32 +416,32 @@ extension netclock {
             cal.timeZone = TimeZone(identifier: "UTC")!
             let components = DateComponents(year: yyyy, month: mm, day: dd, hour: 0, minute: 0)
             let soldate = cal.date(from: components)!.addingTimeInterval(solarSecsSinceMidnight)
-            new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, useGMT: true)
+            new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, showSeconds: false, useGMT: true)
             let hh = Int(solarSecsSinceMidnight / 3600.0)
-            if let solar_civil_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hh) {
-                let civdate = soldate.addingTimeInterval(0.0 - solar_civil_delta)
-                new_tc.tc_civil_hhmm = getHHMMTimeString(d: civdate, useGMT: false)
+            if let solar_device_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hh) {
+                let civdate = soldate.addingTimeInterval(0.0 - solar_device_delta)
+                new_tc.tc_device_hhmm = getHHMMTimeString(d: civdate, showSeconds: false, useGMT: false)
                 let secsSinceMidnight = civdate.timeIntervalSinceMidnightLocal
                 let civmet = secsSinceMidnight! / 8.64
-                new_tc.tc_civil_metric = getMetricTimeString(t: civmet)
+                new_tc.tc_device_metric = getMetricTimeString(t: civmet)
             } else {
                 // no solar delta available -- location services off
-                new_tc.tc_civil_metric = "---"
-                new_tc.tc_civil_hhmm = "---"
+                new_tc.tc_device_metric = "---"
+                new_tc.tc_device_hhmm = "---"
             }
 
-        case .civil_metric:
-            new_tc.tc_civil_metric = getMetricTimeString(t: Double(t))
+        case .device_metric:
+            new_tc.tc_device_metric = getMetricTimeString(t: Double(t))
             
             let secsSinceMidnight = Double(t) * 8.64
             let cal = Calendar.current
             let components = DateComponents(year: yyyy, month: mm, day: dd, hour: 0, minute: 0)
             let civdate = cal.date(from: components)!.addingTimeInterval(secsSinceMidnight)
-            new_tc.tc_civil_hhmm = getHHMMTimeString(d: civdate, useGMT: false)
+            new_tc.tc_device_hhmm = getHHMMTimeString(d: civdate, showSeconds: false, useGMT: false)
             let hh = Int(secsSinceMidnight / 3600.0)
-            if let solar_civil_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hh) {
-                let soldate = civdate.addingTimeInterval(solar_civil_delta)
-                new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, useGMT: true)
+            if let solar_device_delta = mc_sc.sc_delta(yyyy: yyyy, mm: mm, dd: dd, hh: hh) {
+                let soldate = civdate.addingTimeInterval(solar_device_delta)
+                new_tc.tc_solar_hhmm = getHHMMTimeString(d: soldate, showSeconds: false, useGMT: true)
                 let solarSecsSinceMidnight = soldate.timeIntervalSinceMidnightGMT
                 let solmet = solarSecsSinceMidnight! / 8.64
                 new_tc.tc_solar_metric = getMetricTimeString(t: solmet)

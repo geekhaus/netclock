@@ -4,7 +4,8 @@
 //
 //  Tabbed UI for the solar metric clock.
 //
-//  Copyright 2023, Michael A. Olson.
+//  Copyright 2023, Michael A. Olson
+//  Copyright 2025, William Anderson
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:

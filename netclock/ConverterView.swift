@@ -5,7 +5,8 @@
 //  Displays the netclocks' Converter tab. Allows the user to choose a date, type in a metric or an hh:mm time,
 //  solar or civil, for that date, and have the clock convert that input time to all the other options.
 //
-//  Copyright 2023, Michael A. Olson.
+//  Copyright 2023, Michael A. Olson
+//  Copyright 2025, William Anderson
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:

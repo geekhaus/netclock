@@ -2,7 +2,7 @@
 //  netclockUITestsLaunchTests.swift
 //  netclockUITests
 //
-//  Created by Mike Olson on 10/1/23.
+//  Created by Mike Olson on 2023-10-01
 //
 
 import XCTest

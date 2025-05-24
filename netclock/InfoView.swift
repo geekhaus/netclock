@@ -4,7 +4,8 @@
 //
 //  Displays the netclock's Info tab.
 //
-//  Copyright 2023, Michael A. Olson.
+//  Copyright 2023, Michael A. Olson
+//  Copyright 2025, William Anderson
 //
 //  Redistribution and use in source and binary forms, with or without modification, are
 //  permitted provided that the following conditions are met:
@@ -40,7 +41,7 @@ struct InfoView: View {
                 .multilineTextAlignment(.center)
             Divider()
             VStack(alignment: .leading) {
-                Text("For more information on solar time, metric time and the inspiration for this application, please visit https://www.olsons.net/projects/netclock. Please send questions or bug reports to netclock@olsons.net.")
+                Text("For more information on solar time, metric time and the inspiration for this application, please visit https://geekha.us/projects/netclock. Please send questions or bug reports to netclock@geekha.us")
                     .italic()
                 Divider()
                 VStack(alignment: .leading) {
